@@ -1,0 +1,14 @@
+language: rust
+
+rust:
+  - nightly-2018-08-19
+  - nightly-2018-08-24
+
+os:
+  - linux
+
+script:
+  - rustup component add clippy-preview
+  - cargo clippy -- -D warnings
+  - cargo build
+

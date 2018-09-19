@@ -1,0 +1,9 @@
+cargo-features = ["edition"]
+
+[package]
+name = "test_allow_on_fn"
+version = "0.1.0"
+authors = ["flip1995 <9744647+flip1995@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
