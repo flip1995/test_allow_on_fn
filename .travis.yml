@@ -1,14 +1,62 @@
 language: rust
 
 rust:
-  - nightly-2018-08-19
-  - nightly-2018-08-24
+  - nightly
+  # - nightly-2018-08-19
+  # - nightly-2018-08-24
 
 os:
   - linux
 
+sudo: false
+
+matrix:
+  include:
+    - env: COMMIT_HASH=63d66494aff57411bfec1dd2a3a5f1af900feab6
+    - env: COMMIT_HASH=5ce5e0860634258205c313879cb81a125aef4fcb
+    - env: COMMIT_HASH=54d82d0880f93e293bc8fd6439ccfa7970d41f02
+    - env: COMMIT_HASH=e5284b0b57275cb18618ef1532ee7f07c32a1e18
+    - env: COMMIT_HASH=35bf1ae25799a4e62131159f052e0a3cbd27c960
+    - env: COMMIT_HASH=827e57c2f69a9caad36fab189770ad0bb8957d4f
+    - env: COMMIT_HASH=c648b0bb2b3e4f776ff6034f465d9afee622a939
+    - env: COMMIT_HASH=e73077e10603b3586828f2d3d067f804c2fc0a1f
+    - env: COMMIT_HASH=917945d662c42053383fe3e71cb0f313d585e459
+    - env: COMMIT_HASH=f1b506af022fdcb054aa90da1fbcf8c0226292d0
+    - env: COMMIT_HASH=b75b0471a8b87c44e0bd953d2a5c36d896128723
+    - env: COMMIT_HASH=c24f27c0452a9aaecfb70d225d846df2e517385f
+    - env: COMMIT_HASH=329dde57fddee4d5fa0ae374cb5c8474459dfb0c
+    - env: COMMIT_HASH=674ef668f13c52a1fadbf01b24d8da1e12d15e70
+    - env: COMMIT_HASH=71a1ef181683615f1c8da5efb3d8617c0b743009
+    - env: COMMIT_HASH=241b9b45c0580ee3359b1f8139995b95c644eeac
+    - env: COMMIT_HASH=24bc544db4238a8248be7d6e7eae893cf945f1f2
+    - env: COMMIT_HASH=786ccc336dc684cdb00402e84abe4a9bc53857cf
+    - env: COMMIT_HASH=a79cffb8b8330527d262bdde56387d45ac46dd44
+    - env: COMMIT_HASH=1cbf339626e52e1e66a6df3097051bb981bfa964
+    - env: COMMIT_HASH=d0d81b7fc1421859ba0218e8a437af29ae3b0967
+    - env: COMMIT_HASH=2d6d3acf4f6f405af1fcf178300a0728496de138
+    - env: COMMIT_HASH=9f9f2c0095cd683b94adca133f2733aa1f88bb19
+    - env: COMMIT_HASH=a9d496796f091f42c8bac60c5c9ca05e6ca5dcda
+    - env: COMMIT_HASH=70c33bb8e2649a019e48515128a0b447dfe66f6b
+    - env: COMMIT_HASH=1558ae7cfd5e1190d3388dcc6f0f734589e4e478
+    - env: COMMIT_HASH=bf1e461173e3936e4014cc951dfbdd7d9ec9190b
+    - env: COMMIT_HASH=758239c9c9e00b7c0daba6496ef246a85e7b5ce5
+    - env: COMMIT_HASH=d2048b6db375299b681d4f4728b8e7cad9f74d5f
+    - env: COMMIT_HASH=6bf6d50a6ff7685b4aa09172d9d09f03f250da9d
+    - env: COMMIT_HASH=f28f648a9699db67b86735f97d609c3dd06f9ded
+    - env: COMMIT_HASH=3ac79c718475fd29b8be34dde667b683390c2aee
+    - env: COMMIT_HASH=bfc3b20663e1abfff0499332f9168f60c3269c33
+    - env: COMMIT_HASH=b355906919927ab3c879becd14392f023af883a1
+    - env: COMMIT_HASH=8928de74394f320d1109da6731b12638a2167945
+    - env: COMMIT_HASH=a9fe312b98d5a6b194c4ad1a17dcf258ba9941ea
+    - env: COMMIT_HASH=33b923fd44c5c5925e635815fce68bdf1f98740f
+
+
 script:
-  - rustup component add clippy-preview
-  - cargo clippy -- -D warnings
-  - cargo build
+  - cargo install rustup-toolchain-install-master || echo "rustup-toolchain-install-master already installed"
+  - rustup-toolchain-install-master -f -n commit $COMMIT_HASH
+  - curl https://s3-us-west-1.amazonaws.com/rust-lang-ci2/rustc-builds/$COMMIT_HASH/clippy-nightly-x86_64-unknown-linux-gnu.tar.xz --output clippy.tar.xz
+  - tar -xf clippy.tar.xz
+  - cp clippy-nightly-x86_64-unknown-linux-gnu/clippy-preview/bin/* $(rustc +commit --print sysroot)/bin
+  - cp clippy-nightly-x86_64-unknown-linux-gnu/clippy-preview/share/doc/clippy $(rustc +commit --print sysroot)/share/doc -r
+  - cargo +commit clippy -- -D warnings
 
